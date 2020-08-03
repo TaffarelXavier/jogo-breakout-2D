@@ -1,0 +1,38 @@
+html {
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.5) url("../imagens/galaxy2.jpg");
+
+}
+@font-face {
+  font-family: myFirstFont;
+  src: url("../fontes/RUBBBB__.TTF");
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  padding: 0; 
+  margin: 0; 
+}
+      
+canvas { 
+  background: #000; 
+  display: block; 
+  margin: 0 auto; 
+  box-shadow: 0px 0px 10px 0px #0059dd;
+}
+
+h1{
+	font-family:myFirstFont;
+	color: #0095DD;
+	font-size:2.5rem;
+	background:transparent;
+	padding:10px;
+	/*box-shadow: 0px 0px 50px #0059dd;*/
+}
+
+.titulo-jogo{
+		/*order:2px solid red;*/
+		display:flex;
+		justify-content:center;
+		padding:20px;
+}
