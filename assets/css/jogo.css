@@ -1,38 +1,137 @@
-html {
+/* html {
   box-sizing: border-box;
-  background: rgba(0,0,0,0.5) url("../imagens/galaxy2.jpg");
+  background-size: cover;
+  background-position: center center;
+} */
 
-}
 @font-face {
   font-family: myFirstFont;
-  src: url("../fontes/RUBBBB__.TTF");
+  src: url('../fontes/RUBBBB__.TTF');
 }
 
-*, *::before, *::after {
+#painel {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  background: #0059dd;
+  left: 100px;
+  box-shadow: 0px 0px 50px 0px #0059dd;
+  padding: 20px;
+  z-index: 99999;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: inherit;
-  padding: 0; 
-  margin: 0; 
+  padding: 0;
+  margin: 0;
 }
-      
-canvas { 
-  background: #000; 
-  display: block; 
-  margin: 0 auto; 
-  box-shadow: 0px 0px 10px 0px #0059dd;
+.main {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.controle label{
+  display: flex;
+  color: #fff;
+  align-items: flex-start;
 }
 
-h1{
-	font-family:myFirstFont;
-	color: #0095DD;
-	font-size:2.5rem;
-	background:transparent;
-	padding:10px;
-	/*box-shadow: 0px 0px 50px #0059dd;*/
+button {
+  background-color: #0095dd;
+  border: 0;
+  padding: 20px;
+  font-family: myFirstFont;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: myFirstFont;
+  margin-top: 20px;
 }
 
-.titulo-jogo{
-		/*order:2px solid red;*/
-		display:flex;
-		justify-content:center;
-		padding:20px;
+label {
+  display: flex;
+  margin-top: 20px;
+}
+
+canvas {
+  background: #000;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0px 0px 50px 0px #0059dd;
+  border-top-right-radius: 50px;
+  border-top-left-radius: 50px;
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-right: 20px;
+}
+
+h1 {
+  font-family: myFirstFont;
+  color: #0095dd;
+  font-size: 2.5rem;
+  background: transparent;
+  padding: 10px;
+}
+
+.titulo-jogo {
+  /*order:2px solid red;*/
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* FONTE: https://www.w3schools.com/howto/howto_css_shake_image.asp */
+.tremer {
+  animation: tremer 1s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes tremer {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(2deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
