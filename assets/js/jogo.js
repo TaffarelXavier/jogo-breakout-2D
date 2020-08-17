@@ -15,11 +15,14 @@
  * 20 BLOCOS EM LINHAS
  *  2 BLOCOS EM COLUNAS
  */
+
+// Declaração das variáveis:
 var canvas = document.getElementById('myCanvas');
 var btnIniciarJogo = document.getElementById('iniciar-jogo');
 var htmlFase = document.getElementById('fase');
 var pausarSomColisao = document.getElementById('pausar-som-em-colisao');
 var ctx = canvas.getContext('2d');
+
 var ballRadius = 10;
 var x = canvas.width / 2;
 var y = canvas.height - 30;
@@ -31,34 +34,39 @@ var paddleX = (canvas.width - paddleWidth) / 2;
 var rightPressed = false;
 var leftPressed = false;
 var iniciarJogo = false;
-var brickRowCount = 0; // 20
-var brickColumnCount = 0; //30
-var brickWidth = 20;
-var brickHeight = 20;
-var brickPadding = 1;
+var quantidadeTijolosLinhas = 0; // 20
+var quantidadeTijolosColunas = 0; //30
+var comprimentoTijolo = 20;
+var alturaTijolo = 20;
+var margemTijolo = 1;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 
-var score = 0;
-var lives = 3;
-var bricks = [];
+var pontos = 0;
+var _vidas = 3;
+var tijolos = [];
 
+// Declaração da variável do objeto LocalStorage
+// Esta variável serve para persistir alguns dados no LocalStorage
 const LS = window.localStorage;
 
-// Essas instruções abaixo servem para persistir alguns dados no localStorage do navegador.
+/* Essas instruções abaixo servem para persistir 
+alguns dados no localStorage do navegador.
+E também ler, em caso de atualização da página.*/
+
 if (!LS.getItem('fase')) {
-  definirBackground('4127298.jpg');
+  definirBackgroundTela('4127298.jpg');
   definirAcoesParaCadaFase();
 } else {
   if (LS.getItem('fase') == '1') {
-    definirBackground('4127298.jpg', 'hsl(15, 0%, 0%)');
+    definirBackgroundTela('4127298.jpg', 'hsl(15, 0%, 0%)');
   } else if (LS.getItem('fase') == '2') {
-    definirBackground('sun3.jpg', '#fff');
+    definirBackgroundTela('sun3.jpg', '#fff');
     canvas.classList.add('tremer');
   } else if (LS.getItem('fase') == '3') {
-    definirBackground('galaxy2.jpg', '#111');
+    definirBackgroundTela('galaxy2.jpg', '#111');
   } else if (LS.getItem('fase') == '4') {
-    definirBackground('moon-1859616_1920.jpg', '#111');
+    definirBackgroundTela('moon-1859616_1920.jpg', '#111');
   }
   if (LS.getItem('fase') !== '5') {
     htmlFase.innerHTML = 'FASE ' + LS.getItem('fase');
@@ -67,11 +75,12 @@ if (!LS.getItem('fase')) {
     canvas.style.display = 'none';
     htmlFase.innerHTML =
       'ParabÉns, você chegou ao final do jogo.<br/>Você é muito fera!!!!!! ';
-    definirBackground('balloon2.jpg');
+    definirBackgroundTela('balloon2.jpg');
   }
 }
+
 /**
- * Define as acoes das fases de cada jogo:
+ * Define as ações das fases de cada jogo:
  * @param {*} fase
  * @param {*} quantidadeDeBlocosPorLinha
  * @param {*} quantidadeDeBlocosPorColuna
@@ -84,40 +93,39 @@ function definirAcoesParaCadaFase(
 ) {
   LS.setItem('fase', fase);
   LS.setItem('vidas', vidas);
-  LS.setItem('brickRowCount', quantidadeDeBlocosPorLinha);
-  LS.setItem('brickColumnCount', quantidadeDeBlocosPorColuna);
+  LS.setItem('quantidadeTijolosLinhas', quantidadeDeBlocosPorLinha);
+  LS.setItem('quantidadeTijolosColunas', quantidadeDeBlocosPorColuna);
 }
 
-function definirBackground(fileName, canvasBg) {
+/**
+ * Esta função define o fundo da tela para cada cena.
+ */
+function definirBackgroundTela(fileName, canvasBg) {
   let _html = document.getElementsByTagName('body')[0];
   _html.style.background = `#fff url('/assets/imagens/${fileName}') no-repeat`;
 
   if (LS.getItem('fase') !== '4') {
     _html.style.backgroundSize = 'cover !important';
-  } else {
-    // _html.style.backgroundSize = 'cover';
   }
-  // _html.style.backgroundPosition = 'center center';
   canvas.style.background = canvasBg;
 }
 
-function iniciarBlocos() {
-  brickColumnCount = LS.getItem('brickColumnCount');
-  brickRowCount = LS.getItem('brickRowCount');
+/**
+ * Desenha os tijolos no canvas.
+ */
+function iniciarTijolosCanvas() {
+  quantidadeTijolosColunas = LS.getItem('quantidadeTijolosColunas');
+  quantidadeTijolosLinhas = LS.getItem('quantidadeTijolosLinhas');
 
-  for (var c = 0; c < brickColumnCount; c++) {
-    bricks[c] = [];
-    for (var r = 0; r < brickRowCount; r++) {
-      bricks[c][r] = { x: 0, y: 0, status: 1 };
+  for (var c = 0; c < quantidadeTijolosColunas; c++) {
+    tijolos[c] = [];
+    for (var r = 0; r < quantidadeTijolosLinhas; r++) {
+      tijolos[c][r] = { x: 0, y: 0, status: 1 };
     }
   }
 }
-
-iniciarBlocos();
-
-document.addEventListener('keydown', keyDownHandler, false);
-document.addEventListener('keyup', keyUpHandler, false);
-document.addEventListener('mousemove', mouseMoveHandler, false);
+// Chama a função iniciarTijolosCanvas
+iniciarTijolosCanvas();
 
 function keyDownHandler(e) {
   if (e.key == 'Right' || e.key == 'ArrowRight') {
@@ -143,28 +151,28 @@ function mouseMoveHandler(e) {
 }
 
 function detectarColisao() {
-  for (var c = 0; c < brickColumnCount; c++) {
-    for (var r = 0; r < brickRowCount; r++) {
-      var b = bricks[c][r];
+  for (var c = 0; c < quantidadeTijolosColunas; c++) {
+    for (var r = 0; r < quantidadeTijolosLinhas; r++) {
+      var b = tijolos[c][r]; //
       if (b.status == 1) {
         //
         if (
           x > b.x &&
-          x < b.x + brickWidth &&
+          x < b.x + comprimentoTijolo &&
           y > b.y &&
-          y < b.y + brickHeight
+          y < b.y + alturaTijolo
         ) {
           tocarSomEmColisao();
           dy = -dy;
           b.status = 0;
-          score++;
-          if (score == brickRowCount * brickColumnCount) {
+          pontos++; // Incrementa os pontos
+          if (pontos == quantidadeTijolosLinhas * quantidadeTijolosColunas) {
             if (LS.getItem('fase')) {
               if (LS.getItem('fase') !== '4') {
                 alert('Ótimo! Você passou da fase ' + LS.getItem('fase') + '.');
                 if (LS.getItem('fase') == 1) {
-                  definirAcoesParaCadaFase(2, 10, 3, 4); //Número da fase; quant de blocos por linha; quant de colunas, vidas respectivamente
-                  definirBackground();
+                  definirAcoesParaCadaFase(2, 10, 3, 4); // Número da fase, quant de blocos por linha, quant de colunas e vidas respectivamente
+                  definirBackgroundTela();
                 } else if (LS.getItem('fase') == 2) {
                   definirAcoesParaCadaFase(3, 15, 3, 5);
                 } else if (LS.getItem('fase') == 3) {
@@ -182,7 +190,7 @@ function detectarColisao() {
   }
 }
 
-function drawBall() {
+function desenharBola() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = '#0095DD';
@@ -190,7 +198,7 @@ function drawBall() {
   ctx.closePath();
 }
 
-function drawPaddle() {
+function desenharPrancha() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
   ctx.fillStyle = '#0095DD';
@@ -198,27 +206,27 @@ function drawPaddle() {
   ctx.closePath();
 }
 
-function drawBricks() {
-  for (var c = 0; c < brickColumnCount; c++) {
-    for (var r = 0; r < brickRowCount; r++) {
-      if (bricks[c][r].status == 1) {
+function desenharTijolos() {
+  for (var c = 0; c < quantidadeTijolosColunas; c++) {
+    for (var r = 0; r < quantidadeTijolosLinhas; r++) {
+      if (tijolos[c][r].status == 1) {
         var brickX = 0;
 
         if (parseInt(LS.getItem('fase'), 10) == 1) {
-          brickX = r * (brickWidth + brickPadding) + brickOffsetLeft + 100; //
+          brickX = r * (comprimentoTijolo + margemTijolo) + brickOffsetLeft + 100; //
         } else if (parseInt(LS.getItem('fase'), 10) == 2) {
-          brickX = r * (brickWidth + brickPadding) + brickOffsetLeft + 110; //
+          brickX = r * (comprimentoTijolo + margemTijolo) + brickOffsetLeft + 110; //
         } else if (parseInt(LS.getItem('fase'), 10) == 3) {
-          brickX = r * (brickWidth + brickPadding) + brickOffsetLeft + 54; //
+          brickX = r * (comprimentoTijolo + margemTijolo) + brickOffsetLeft + 54; //
         } else if (parseInt(LS.getItem('fase'), 10) == 4) {
-          brickX = r * (brickWidth + brickPadding) + brickOffsetLeft + 54; //
+          brickX = r * (comprimentoTijolo + margemTijolo) + brickOffsetLeft + 54; //
         }
 
-        var brickY = c * (brickHeight + brickPadding) + brickOffsetTop;
-        bricks[c][r].x = brickX;
-        bricks[c][r].y = brickY;
+        var brickY = c * (alturaTijolo + margemTijolo) + brickOffsetTop;
+        tijolos[c][r].x = brickX;
+        tijolos[c][r].y = brickY;
         ctx.beginPath();
-        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+        ctx.rect(brickX, brickY, comprimentoTijolo, alturaTijolo);
         ctx.fillStyle = '#0095DD';
         ctx.fill();
         ctx.closePath();
@@ -229,6 +237,7 @@ function drawBricks() {
 
 function tocarSomEmColisao() {
   if (pausarSomColisao.checked) {
+    // Caso a caixa seja, em controles, seja marcada. Por padrão, checked é true
     var audio = new Audio('assets/sounds/NFF-deflate.wav');
     audio.volume = 0.1;
     audio.play();
@@ -254,7 +263,7 @@ function tocarGameOver() {
 function desenharCaixaPontos() {
   ctx.font = '16px myFirstFont';
   ctx.fillStyle = '#0095DD';
-  ctx.fillText('PONTOS: ' + score, 8, 20);
+  ctx.fillText('PONTOS: ' + pontos, 8, 20);
 }
 
 function desenharMsgGameOver() {
@@ -262,7 +271,7 @@ function desenharMsgGameOver() {
   ctx.fillStyle = '#0095DD';
   ctx.textAlign = 'center';
   ctx.fillText('GAME OVER', canvas.width / 2, 240);
-  cancelAnimationFrame(draw);
+  cancelAnimationFrame(criarDesenhos);
   tocarGameOver();
   btnIniciarJogo.style.display = 'block';
 }
@@ -272,18 +281,25 @@ function desenharCaixaVidas() {
   ctx.fillStyle = '#0095DD';
   let vidas = LS.getItem('vidas');
   if (!vidas) {
-    // Se a variável vidas não existir no localStorage
-    ctx.fillText('VIDAS: ' + lives, canvas.width - 90, 20);
+    // Se a variável vidas não existir no localStorage,
+    // define a quantidade de vidas com o valor da variável _vidas.
+    ctx.fillText('VIDAS: ' + _vidas, canvas.width - 90, 20);
   } else {
     ctx.fillText('VIDAS: ' + vidas, canvas.width - 90, 20);
   }
 }
 
-function draw(comFrame) {
+/**
+ * Esta função é o coração do sistema, pois ela define a questão
+ * da bola andar na tela. E outras funções.
+ *
+ * @param {*} comFrame
+ */
+function criarDesenhos(comFrame) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBricks();
-  drawBall();
-  drawPaddle();
+  desenharTijolos();
+  desenharBola();
+  desenharPrancha();
   desenharCaixaPontos();
   desenharCaixaVidas();
   detectarColisao();
@@ -326,49 +342,62 @@ function draw(comFrame) {
   x += dx;
   y += dy;
   if (comFrame) {
-    requestAnimationFrame(draw);
+    requestAnimationFrame(criarDesenhos);
   }
 }
+// Chama a função
+criarDesenhos();
 
-draw();
-
-function shake(oncomplete, distance = 5, time = 500) {
+/**
+ * Função para tremer a tela do canvas
+ * @param {*} oncomplete
+ * @param {*} distance
+ * @param {*} time
+ */
+function tremer(oncomplete, distance = 5, time = 500) {
   var start = new Date().getTime();
   animate();
 
   function animate() {
     var now = new Date().getTime();
-    // Get current time
+    // Obtenha a hora atual
     var elapsed = now - start;
-    // How long since we started
+    // Há quanto tempo começamos
     var fraction = elapsed / time;
-    // What fraction of total time?
+    // Qual fração do tempo total?
     if (fraction < 1) {
       var x = distance * Math.sin(fraction * 4 * Math.PI);
       canvas.style.left = x + 'px';
-      // We're aiming for a smooth 40 frames/second animation.
+      // Nosso objetivo é uma animação suave de 40 quadros / segundo.
       setTimeout(animate, Math.min(25, time - elapsed));
     } else {
-      // Otherwise, the animation is complete
+      // Caso contrário, a animação está completa
       if (oncomplete) oncomplete(e);
-      // Invoke completion callback
+      // Invocar callback de conclusão
     }
   }
 }
 
-shake();
+// Chama a função
+tremer();
 
+// Evento do botão principal para iniciar o jogo.
 btnIniciarJogo.onclick = function () {
   if (LS.getItem('fase') != 5) {
     btnIniciarJogo.style.display = 'none';
     htmlFase.style.display = 'none';
     tocarSomBackground();
-    draw(true);
+    criarDesenhos(true);
   } else {
-    LS.removeItem('brickRowCount');
-    LS.removeItem('brickColumnCount');
+    LS.removeItem('quantidadeTijolosLinhas');
+    LS.removeItem('quantidadeTijolosColunas');
     LS.removeItem('fase');
     LS.removeItem('vidas');
     window.location.reload();
   }
 };
+
+// Eventos do teclado para mover a prancha
+document.addEventListener('keydown', keyDownHandler, false);
+document.addEventListener('keyup', keyUpHandler, false);
+document.addEventListener('mousemove', mouseMoveHandler, false);
