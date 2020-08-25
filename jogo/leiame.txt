@@ -1,0 +1,17 @@
+Instruções para o Jogo
+----------------------
+Passo 1)
+
+Descompactar o arquivo jogo.zip em alguma pasta do arquivos de sistema do sistema operacional.
+
+Passo 2)
+
+Clicar com o botão direito sobre o arquivo index.html, após, caso esteja no Windows, ir a "abrir com" e escolher algum navegador,
+preferencialmente, o Google Chrome devido às suas atualizações diárias, sempre está bem atualizado com as especificações do
+html5 e etc.
+
+Caso esteja no Linux, clicar com o botão direito e, após, clicar em "abrir com outro aplicativo", selecionar a opção Google Chrome ou Mozilla Firefox;
+
+Aberto o jogo no navegador, o usuário deve desmarcar a opção "Tocar som do fundo" para não tocar o som do fundo sempre no início.
+
+Após isso, o jogador deve clicar no botão, à esquerda, denominado Iniciar.
